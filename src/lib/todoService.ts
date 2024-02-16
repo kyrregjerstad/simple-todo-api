@@ -55,7 +55,7 @@ export const upsertTodo = async (dbUrl: string, userId: number, todo: any) => {
 
 	return db
 		.insert(schema.todos)
-		.values({ ...todo, userId, createdAt: new Date().toISOString() })
+		.values({ ...todo, userId })
 		.returning();
 };
 

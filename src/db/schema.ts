@@ -34,7 +34,6 @@ export const selectTodoSchema = createSelectSchema(todos);
 export type InsertUser = InferInsertModel<typeof users>;
 
 export const insertTodoSchema = z.object({
-	userId: z.number(),
 	name: z.string().min(1).max(250),
 	description: z.string().min(1).max(500).optional(),
 	completed: z.boolean().optional(),

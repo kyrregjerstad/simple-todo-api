@@ -58,10 +58,13 @@ app.post('/todos/user/:userId', async (c) => {
 
 	const todo = validationResult.data;
 
+	console.log(todo);
+
 	try {
 		const newTodo = await upsertTodo(c.env.DATABASE_URL, userId, todo);
 		return c.json(newTodo);
 	} catch (error) {
+		console.log(error);
 		return c.json({ error: 'Failed to create todo' }, 500);
 	}
 });
