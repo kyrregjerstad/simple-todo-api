@@ -44,7 +44,7 @@ export type InsertTodo = z.infer<typeof insertTodoSchema>;
 
 export const updateTodoSchema = z.object({
 	name: z.string().min(1).max(250).optional(),
-	description: z.string().min(1).max(500).optional(),
+	description: z.string().min(1).max(500).nullish(),
 	completed: z.boolean().optional(),
 });
 
