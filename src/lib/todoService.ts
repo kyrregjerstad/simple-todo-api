@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { getDb } from '../db/db';
 import * as schema from '../db/schema';
@@ -25,6 +25,7 @@ export const fetchUserTodos = async (dbUrl: string, userId: number) => {
 					createdAt: true,
 				},
 				limit: 100,
+				orderBy: desc(schema.todos.createdAt),
 			},
 		},
 	});
