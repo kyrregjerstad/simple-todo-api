@@ -1,0 +1,34 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1707768364704,
+      "tag": "0000_past_bishop",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1707769945261,
+      "tag": "0001_opposite_sauron",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1708071608083,
+      "tag": "0002_fluffy_strong_guy",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1708072006418,
+      "tag": "0003_keen_scrambler",
+      "breakpoints": true
+    }
+  ]
+}

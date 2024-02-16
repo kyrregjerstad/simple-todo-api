@@ -1,32 +1,96 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
+import { eq } from 'drizzle-orm';
+import { app } from './app';
+import { getDb } from './db/db';
+import * as schema from './db/schema';
 
-export interface Env {
-	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
-	// MY_KV_NAMESPACE: KVNamespace;
-	//
-	// Example binding to Durable Object. Learn more at https://developers.cloudflare.com/workers/runtime-apis/durable-objects/
-	// MY_DURABLE_OBJECT: DurableObjectNamespace;
-	//
-	// Example binding to R2. Learn more at https://developers.cloudflare.com/workers/runtime-apis/r2/
-	// MY_BUCKET: R2Bucket;
-	//
-	// Example binding to a Service. Learn more at https://developers.cloudflare.com/workers/runtime-apis/service-bindings/
-	// MY_SERVICE: Fetcher;
-	//
-	// Example binding to a Queue. Learn more at https://developers.cloudflare.com/queues/javascript-apis/
-	// MY_QUEUE: Queue;
-}
+app.get('/', async (c) => {
+	try {
+		const db = getDb(c.env.DATABASE_URL);
 
-export default {
-	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		return new Response('Hello World!');
-	},
-};
+		const result = await db.query.todos.findMany({
+			limit: 100,
+		});
+
+		return c.json({
+			result,
+		});
+	} catch (error) {
+		console.log(error);
+		return c.json(
+			{
+				error,
+			},
+			400,
+		);
+	}
+});
+
+app.get('/todos/user/:userId', async (c) => {
+	const userId = parseInt(c.req.param('userId'), 10);
+	if (!userId) {
+		return c.json({ error: 'User ID is required' }, 400);
+	}
+
+	try {
+		const db = getDb(c.env.DATABASE_URL);
+
+		const result = await db.query.users.findFirst({
+			where: eq(schema.users.id, userId),
+			columns: {
+				id: false,
+			},
+			with: {
+				todos: true,
+			},
+		});
+
+		if (!result) {
+			return c.json({ error: 'User not found' }, 404);
+		}
+
+		return c.json(result.todos);
+	} catch (error) {
+		console.log(error);
+		return c.json({ error: 'Failed to fetch todos' }, 500);
+	}
+});
+
+app.post('/todos/user/:userId', async (c) => {
+	const userId = parseInt(c.req.param('userId'), 10);
+	const body = await c.req.json();
+	const validation = schema.insertTodoSchema.safeParse(body);
+
+	if (!validation.success) {
+		return c.json({ error: `Invalid todo ${validation.error}` }, 400);
+	}
+
+	const todo = validation.data;
+
+	try {
+		const db = getDb(c.env.DATABASE_URL);
+
+		const user = await db.query.users.findFirst({
+			where: eq(schema.users.id, userId),
+		});
+
+		if (!user) {
+			await db.insert(schema.users).values({ id: userId });
+		}
+
+		const newTodo = await db
+			.insert(schema.todos)
+			.values({
+				...todo,
+				userId,
+				createdAt: new Date().toISOString(),
+			})
+			.returning();
+
+		return c.json(newTodo);
+	} catch (error) {
+		console.log(error);
+		return c.json({ error: 'Failed to create todo' }, 500);
+	}
+});
+
+export default app;
