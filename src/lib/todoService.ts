@@ -26,7 +26,7 @@ export const fetchUserTodos = async (dbUrl: string, userId: number, isCompleted:
 					createdAt: true,
 				},
 				limit: 100,
-				orderBy: desc(schema.todos.createdAt),
+				orderBy: (todos, { sql, desc }) => [sql`case when ${todos.completed} then 1 else 0 end`, desc(todos.createdAt)],
 			},
 		},
 	});
