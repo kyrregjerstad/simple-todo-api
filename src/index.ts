@@ -83,8 +83,11 @@ app.get('/users/:userId/todos', async (c) => {
 	const userId = parseId(c.req.param('userId'));
 	if (!userId) return c.json({ success: false, error: 'User ID is required' }, 400);
 
+	const completed = c.req.query('completed');
+	const isCompleted = completed === 'true' ? true : completed === 'false' ? false : undefined;
+
 	try {
-		const userTodos = await fetchUserTodos(c.env.DATABASE_URL, userId);
+		const userTodos = await fetchUserTodos(c.env.DATABASE_URL, userId, isCompleted);
 		if (!userTodos) return c.json({ success: false, error: 'User not found' }, 404);
 		return c.json(userTodos.todos);
 	} catch (error) {

@@ -10,13 +10,14 @@ export const fetchTodos = async (dbUrl: string) => {
 	return db.query.todos.findMany({ limit: 100 });
 };
 
-export const fetchUserTodos = async (dbUrl: string, userId: number) => {
+export const fetchUserTodos = async (dbUrl: string, userId: number, isCompleted: boolean | undefined) => {
 	const db = getDb(dbUrl);
 	return db.query.users.findFirst({
 		where: eq(schema.users.id, userId),
 		columns: { id: false },
 		with: {
 			todos: {
+				where: isCompleted !== undefined ? eq(schema.todos.completed, isCompleted) : undefined,
 				columns: {
 					id: true,
 					name: true,
