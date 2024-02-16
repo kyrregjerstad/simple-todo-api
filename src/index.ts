@@ -17,8 +17,11 @@ import { handleScheduledEvent } from './cronDelete';
 import { Env } from './types';
 
 app.get('/todos', async (c) => {
+	const completed = c.req.query('completed');
+	const isCompleted = completed === 'true' ? true : completed === 'false' ? false : undefined;
+
 	try {
-		const todos = await fetchTodos(c.env.DATABASE_URL);
+		const todos = await fetchTodos(c.env.DATABASE_URL, isCompleted);
 		return c.json(todos);
 	} catch (error) {
 		console.log(error);

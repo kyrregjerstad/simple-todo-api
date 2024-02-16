@@ -5,9 +5,9 @@ import * as schema from '../db/schema';
 
 export const parseId = (id: string) => parseInt(id, 10);
 
-export const fetchTodos = async (dbUrl: string) => {
+export const fetchTodos = async (dbUrl: string, isCompleted: boolean | undefined) => {
 	const db = getDb(dbUrl);
-	return db.query.todos.findMany({ limit: 100 });
+	return db.query.todos.findMany({ limit: 100, where: isCompleted !== undefined ? eq(schema.todos.completed, isCompleted) : undefined });
 };
 
 export const fetchUserTodos = async (dbUrl: string, userId: number, isCompleted: boolean | undefined) => {
