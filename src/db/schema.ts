@@ -1,6 +1,7 @@
-import { relations } from 'drizzle-orm';
-import { boolean, integer, pgTable, serial, varchar } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { InferInsertModel, relations, sql } from 'drizzle-orm';
+import { boolean, integer, pgTable, serial, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { createSelectSchema } from 'drizzle-zod';
+import { z } from 'zod';
 
 export const users = pgTable('users', {
 	id: serial('id').primaryKey(),
@@ -12,7 +13,9 @@ export const todos = pgTable('todos', {
 	name: varchar('name', { length: 250 }).notNull(),
 	description: varchar('description', { length: 500 }),
 	completed: boolean('completed').notNull().default(false),
-	createdAt: varchar('created_at').notNull().default('now()'),
+	createdAt: timestamp('created_at', { withTimezone: true })
+		.notNull()
+		.default(sql`now()`),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -26,5 +29,24 @@ export const todosRelations = relations(todos, ({ one }) => ({
 	}),
 }));
 
-export const insertTodoSchema = createInsertSchema(todos);
 export const selectTodoSchema = createSelectSchema(todos);
+
+export type InsertUser = InferInsertModel<typeof users>;
+
+export const insertTodoSchema = z.object({
+	userId: z.number(),
+	name: z.string().min(1).max(250),
+	description: z.string().min(1).max(500).optional(),
+	completed: z.boolean().optional(),
+});
+
+export type InsertTodoSchema = typeof insertTodoSchema;
+
+export const updateTodoSchema = z.object({
+	name: z.string().min(1).max(250).optional(),
+	description: z.string().min(1).max(500).optional(),
+	completed: z.boolean().optional(),
+});
+
+export type UpdateTodoSchema = typeof updateTodoSchema;
+export type UpdateTodo = z.infer<typeof updateTodoSchema>;
