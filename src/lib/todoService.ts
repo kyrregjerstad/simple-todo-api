@@ -64,6 +64,15 @@ export const deleteTodo = async (dbUrl: string, todoId: number) => {
 	return db.delete(schema.todos).where(eq(schema.todos.id, todoId)).returning();
 };
 
+export const resetDb = async (dbUrl: string) => {
+	const db = getDb(dbUrl);
+	// await db.delete(schema.users);
+	// await db.delete(schema.todos);
+
+	// await db.insert(schema.users).values({ id: 1 });
+	// await db.insert(schema.todos).values({ userId: 1, name: 'First todo', description: 'First todo description' });
+};
+
 type ValidateNewTodoReturnType = z.SafeParseReturnType<
 	(typeof schema.insertTodoSchema)['_output'],
 	(typeof schema.insertTodoSchema)['_input']

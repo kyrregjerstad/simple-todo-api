@@ -1,4 +1,6 @@
 import { app } from './app';
+import { bearerAuth } from 'hono/bearer-auth';
+
 import {
 	completeTodo,
 	deleteTodo,
@@ -11,6 +13,8 @@ import {
 	validateNewTodo,
 	validateUpdatedTodo,
 } from './lib/todoService';
+import { handleScheduledEvent } from './cronDelete';
+import { Env } from './types';
 
 app.get('/todos', async (c) => {
 	try {
@@ -106,4 +110,22 @@ app.post('/todos/:todoId/complete', async (c) => {
 	return c.json(todo);
 });
 
-export default app;
+app.get('/health', (c) => {
+	console.log('Health check');
+	return c.json({ status: 'ok' });
+});
+
+app.get('/admin/reset-db', (c) => {
+	console.log('Resetting db...');
+
+	return c.json({ status: 'ok' });
+});
+
+export default {
+	async fetch(request: Request, env: Env, ctx: ExecutionContext) {
+		return app.fetch(request, env, ctx);
+	},
+	async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
+		ctx.waitUntil(handleScheduledEvent(event));
+	},
+};
