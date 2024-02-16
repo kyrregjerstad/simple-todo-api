@@ -26,20 +26,6 @@ app.get('/todos', async (c) => {
 	}
 });
 
-app.get('/todos/user/:userId', async (c) => {
-	const userId = parseId(c.req.param('userId'));
-	if (!userId) return c.json({ success: false, error: 'User ID is required' }, 400);
-
-	try {
-		const userTodos = await fetchUserTodos(c.env.DATABASE_URL, userId);
-		if (!userTodos) return c.json({ success: false, error: 'User not found' }, 404);
-		return c.json(userTodos.todos);
-	} catch (error) {
-		console.log(error);
-		return c.json({ error: 'Failed to fetch todos' }, 500);
-	}
-});
-
 app.get('/todos/:todoId', async (c) => {
 	const todoId = parseId(c.req.param('todoId'));
 	const todo = await fetchSingleTodo(c.env.DATABASE_URL, todoId);
@@ -49,26 +35,8 @@ app.get('/todos/:todoId', async (c) => {
 	return c.json(todo);
 });
 
-app.post('/todos/user/:userId', async (c) => {
-	const userId = parseId(c.req.param('userId'));
-	const body = await c.req.json();
-	const validationResult = validateNewTodo(body);
-
-	if (!validationResult.success) return c.json({ error: `Invalid todo ${validationResult.error}` }, 400);
-
-	const todo = validationResult.data;
-
-	try {
-		const newTodo = await upsertTodo(c.env.DATABASE_URL, userId, todo);
-		return c.json(newTodo);
-	} catch (error) {
-		console.log(error);
-		return c.json({ error: 'Failed to create todo' }, 500);
-	}
-});
-
 app.patch('/todos/:todoId', async (c) => {
-	const todoId = parseInt(c.req.param('todoId'), 10);
+	const todoId = parseId(c.req.param('todoId'));
 	const body = await c.req.json();
 
 	const validationResult = validateUpdatedTodo(body);
@@ -102,13 +70,45 @@ app.delete('/todos/:todoId', async (c) => {
 	return c.newResponse(null, 204); // No content to return
 });
 
-app.post('/todos/:todoId/complete', async (c) => {
+app.patch('/todos/:todoId/complete', async (c) => {
 	const todoId = parseId(c.req.param('todoId'));
 	const todo = await completeTodo(c.env.DATABASE_URL, todoId);
 
 	if (!todo) return c.json({ error: 'Todo not found' }, 404);
 
 	return c.json(todo);
+});
+
+app.get('/users/:userId/todos', async (c) => {
+	const userId = parseId(c.req.param('userId'));
+	if (!userId) return c.json({ success: false, error: 'User ID is required' }, 400);
+
+	try {
+		const userTodos = await fetchUserTodos(c.env.DATABASE_URL, userId);
+		if (!userTodos) return c.json({ success: false, error: 'User not found' }, 404);
+		return c.json(userTodos.todos);
+	} catch (error) {
+		console.log(error);
+		return c.json({ error: 'Failed to fetch todos' }, 500);
+	}
+});
+
+app.post('/users/:userId/todos', async (c) => {
+	const userId = parseId(c.req.param('userId'));
+	const body = await c.req.json();
+	const validationResult = validateNewTodo(body);
+
+	if (!validationResult.success) return c.json({ error: `Invalid todo ${validationResult.error}` }, 400);
+
+	const todo = validationResult.data;
+
+	try {
+		const newTodo = await upsertTodo(c.env.DATABASE_URL, todo, userId);
+		return c.json(newTodo);
+	} catch (error) {
+		console.log(error);
+		return c.json({ error: 'Failed to create todo' }, 500);
+	}
 });
 
 app.get('/health', (c) => {

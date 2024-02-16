@@ -45,7 +45,7 @@ export const completeTodo = async (dbUrl: string, todoId: number) => {
 	return await db.update(schema.todos).set({ completed: true }).where(eq(schema.todos.id, todoId)).returning();
 };
 
-export const upsertTodo = async (dbUrl: string, userId: number, todo: any) => {
+export const upsertTodo = async (dbUrl: string, todo: schema.InsertTodo, userId: number) => {
 	const db = getDb(dbUrl);
 	const userExists = await db.query.users.findFirst({ where: eq(schema.users.id, userId) });
 

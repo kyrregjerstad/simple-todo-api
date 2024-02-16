@@ -40,6 +40,7 @@ export const insertTodoSchema = z.object({
 });
 
 export type InsertTodoSchema = typeof insertTodoSchema;
+export type InsertTodo = z.infer<typeof insertTodoSchema>;
 
 export const updateTodoSchema = z.object({
 	name: z.string().min(1).max(250).optional(),
