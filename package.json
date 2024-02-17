@@ -19,6 +19,7 @@
 		"wrangler": "^3.0.0"
 	},
 	"dependencies": {
+		"@hono/swagger-ui": "^0.2.1",
 		"@neondatabase/serverless": "^0.8.1",
 		"drizzle-orm": "^0.29.3",
 		"drizzle-zod": "^0.5.1",
