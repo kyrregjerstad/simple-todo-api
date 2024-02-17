@@ -4,6 +4,18 @@
 
 This API is designed for developers who need a straightforward and accessible way to perform CRUD operations on a live database for testing purposes. It offers a no-authentication-needed interface, allowing for hassle-free interaction with the API endpoints. Please note that all data in the database gets reset every 24 hours.
 
+## Technologies
+
+![Hono Badge](https://img.shields.io/badge/Hono-E36002?logo=hono&logoColor=fff&style=flat)
+![Drizzle Badge](https://img.shields.io/badge/Drizzle-C5F74F?logo=drizzle&logoColor=000&style=flat)
+![Zod Badge](https://img.shields.io/badge/Zod-3E67B1?logo=zod&logoColor=fff&style=flat)
+![Cloudflare Badge](https://img.shields.io/badge/Cloudflare-F38020?logo=cloudflare&logoColor=fff&style=flat)
+
+- **Hono**: A small, simple, and ultrafast web framework for the Edges.
+- **Drizzle**: Fast sql-like TypeScript ORM.
+- **Zod**: A TypeScript-first schema declaration and validation library.
+- **Cloudflare**: The API is hosted on Cloudflare Workers, a serverless platform that allows for running JavaScript code at the edge.
+
 ## Features
 
 - **CRUD Operations**: Create, Read, Update, and Delete todos.
