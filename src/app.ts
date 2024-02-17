@@ -1,15 +1,16 @@
 import { Hono } from 'hono';
-
-import { prettyJSON } from 'hono/pretty-json';
-import { Env } from './types';
-import { bearerAuth } from 'hono/bearer-auth';
 import { cors } from 'hono/cors';
-import { swaggerUI, SwaggerUI } from '@hono/swagger-ui';
 import { html } from 'hono/html';
+import { prettyJSON } from 'hono/pretty-json';
+import { bearerAuth } from 'hono/bearer-auth';
+import { swaggerUI, SwaggerUI } from '@hono/swagger-ui';
+import { sentry } from '@hono/sentry';
 import { openAPISpec } from './lib/open-api-spec';
+import { Env } from './types';
 
 export const app = new Hono<{ Bindings: Env }>();
 
+app.use('*', sentry());
 app.use(cors());
 app.use('/admin/*', async (c, next) => {
 	const token = c.env.BEARER_TOKEN;
