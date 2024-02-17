@@ -1,6 +1,6 @@
 import { app } from './app';
-import { bearerAuth } from 'hono/bearer-auth';
 
+import { handleScheduledEvent } from './cronDelete';
 import {
 	completeTodo,
 	deleteTodo,
@@ -13,7 +13,6 @@ import {
 	validateNewTodo,
 	validateUpdatedTodo,
 } from './lib/todoService';
-import { handleScheduledEvent } from './cronDelete';
 import { Env } from './types';
 
 app.get('/todos', async (c) => {

@@ -1,7 +1,7 @@
 import { desc, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { getDb } from '../db/db';
-import * as schema from '../db/schema';
+import * as schema from '../db/tables';
 
 export const parseId = (id: string) => parseInt(id, 10);
 
