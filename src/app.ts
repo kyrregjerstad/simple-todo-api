@@ -21,6 +21,10 @@ app.use('/admin/*', async (c, next) => {
 
 app.use(prettyJSON());
 
+app.get('/', async (c) => {
+	return c.json({ message: 'Welcome to the simple todo API. Please visit /ui to see the documentation.' });
+});
+
 app.get('/ui', swaggerUI({ url: '/doc' }));
 
 app.get('/doc', async (c) => {

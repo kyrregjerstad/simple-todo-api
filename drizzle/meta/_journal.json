@@ -8,6 +8,34 @@
       "when": 1708079136892,
       "tag": "0000_red_kate_bishop",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1708266326130,
+      "tag": "0001_lazy_morlocks",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1708266752469,
+      "tag": "0002_stiff_natasha_romanoff",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1708267623659,
+      "tag": "0003_typical_alex_power",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1708269806210,
+      "tag": "0004_talented_richard_fisk",
+      "breakpoints": true
     }
   ]
 }

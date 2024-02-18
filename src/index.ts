@@ -4,10 +4,13 @@ import { handleScheduledEvent } from './cronDelete';
 import {
 	completeTodo,
 	deleteTodo,
+	extractUniqueUserIds,
 	fetchSingleTodo,
 	fetchTodos,
 	fetchUserTodos,
+	getRecentUserTransactions,
 	parseId,
+	resetUsers,
 	updateSingleTodo,
 	upsertTodo,
 	validateNewTodo,
@@ -117,14 +120,26 @@ app.post('/users/:userId/todos', async (c) => {
 });
 
 app.get('/health', (c) => {
-	console.log('Health check');
 	return c.json({ status: 'ok' });
 });
 
-app.get('/admin/reset-db', (c) => {
-	console.log('Resetting db...');
+app.post('/admin/reset-db', async (c) => {
+	try {
+		const recentTransactions = await getRecentUserTransactions(c.env.DATABASE_URL);
+		const uniqueUserIds = extractUniqueUserIds(recentTransactions);
 
-	return c.json({ status: 'ok' });
+		await resetUsers(uniqueUserIds, c.env.DATABASE_URL);
+
+		return c.json({ status: 'ok' });
+	} catch (error) {
+		console.error('Failed to reset transactions:', error);
+		return c.json({ error: 'Failed to reset transactions' }, 500);
+	}
+});
+
+app.get('/admin/transactions', async (c) => {
+	const res = await getRecentUserTransactions(c.env.DATABASE_URL);
+	return c.json(res);
 });
 
 export default {
