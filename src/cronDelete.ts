@@ -1,12 +1,15 @@
 import type { Env } from './types';
 
-export async function handleScheduledEvent(event: ScheduledEvent) {
-	console.log('Running scheduled event :)');
-	await fetch('http://localhost:8787/health');
+export async function cleanUpDb(env: Env) {
+	try {
+		return await fetch('/admin/reset-db', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${env.BEARER_TOKEN}`,
+			},
+		});
+	} catch (error) {
+		console.error('Failed to reset transactions:', error);
+	}
 }
-
-export default {
-	async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
-		ctx.waitUntil(handleScheduledEvent(event));
-	},
-};

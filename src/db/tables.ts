@@ -9,7 +9,7 @@ export const actionEnum = pgEnum('action_enum', ['create', 'update', 'delete']);
 export const transactions = pgTable('transactions', {
 	id: serial('id').primaryKey(),
 	tableName: tableNameEnum('table_name').notNull(),
-	recordId: serial('record_id'), // Assuming IDs in your tables are serial types
+	recordId: serial('record_id'),
 	action: actionEnum('action').notNull(),
 	createdAt: timestamp('created_at', { withTimezone: true })
 		.notNull()

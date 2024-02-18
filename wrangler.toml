@@ -2,9 +2,9 @@ name = "simple-todo-api"
 main = "src/index.ts"
 compatibility_date = "2024-02-08"
 
+[triggers]
+crons = ["0 * * * *"] # Runs at the start of every hour
 
-# [triggers]
-# crons = ["* * * * *"] # Example: runs at the start of every minute
 
 # Variable bindings. These are arbitrary, plaintext strings (similar to environment variables)
 # Note: Use secrets to store sensitive data.

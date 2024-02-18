@@ -92,6 +92,8 @@ export const deleteTodo = async (dbUrl: string, todoId: number) => {
 	return deletedTodo;
 };
 
+const oneDay = new Date(Date.now() - 1000 * 60 * 60 * 24);
+
 export const getRecentUserTransactions = async (dbUrl: string) => {
 	const db = getDb(dbUrl);
 	const transactions = await db.query.transactions.findMany({
@@ -103,6 +105,7 @@ export const getRecentUserTransactions = async (dbUrl: string) => {
 				},
 			},
 		},
+		where: gt(schema.transactions.createdAt, oneDay),
 	});
 
 	return transactions;

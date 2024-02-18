@@ -1,6 +1,6 @@
 import { app } from './app';
 
-import { handleScheduledEvent } from './cronDelete';
+import { cleanUpDb } from './cronDelete';
 import {
 	completeTodo,
 	deleteTodo,
@@ -147,6 +147,6 @@ export default {
 		return app.fetch(request, env, ctx);
 	},
 	async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
-		ctx.waitUntil(handleScheduledEvent(event));
+		ctx.waitUntil(cleanUpDb(env));
 	},
 };
